@@ -1,0 +1,56 @@
+services:
+  test-container:
+    container_name: test-container
+    build:
+      context: .
+    environment:
+      - PORT=1234
+    ports:
+      - "3000:1234"
+    volumes:
+      - "C:/study/course_4/term_7/it_project_management/laba_1/myapp/logs:/app/logs"
+
+  db:
+    container_name: postgres
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword  # Или из .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    restart: always
+    depends_on:
+      - mongo
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+
+volumes:
+  postgres_data:
